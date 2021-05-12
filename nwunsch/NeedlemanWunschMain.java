@@ -1,7 +1,7 @@
 package nwunsch;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
@@ -20,11 +20,9 @@ public class NeedlemanWunschMain {
 
     public static CyclicBarrier barrier;
 
-    public static void main(String[] args) throws IOException {
+    public static List<PData> initialize(String[] args) throws IOException {
         FileLoader fileLoader = new FileLoader();
 
-//        String fileName1 = "seq1_SARS-COV.data";
-//        String fileName2 = "seq2_MERS.data";
         String firstSeq;
         String secondSeq;
         Integer limit = 1000;
@@ -41,7 +39,7 @@ public class NeedlemanWunschMain {
             }
 
         }
-        validateInput(limit, numThreads);
+//        validateInput(limit, numThreads);
 
         if (limit != null && limit > 0) {
 //            firstSeq = fileLoader.getSequence("Sequence A").substring(0, limit);
@@ -51,18 +49,6 @@ public class NeedlemanWunschMain {
             secondSeq = fileLoader.getSequence("Sequence B");
         }
 
-//        //sequencial
-//        System.out.println("------------------------------------------------");
-//        System.out.println("Execução Sequencial:");
-//        System.out.println("processando...");
-//        long currentTimeStart = System.nanoTime();
-//        nwunsch.NeedlemanWunsch alinhamento = new nwunsch.NeedlemanWunsch(firstSeq, secondSeq, MATCH, MISMATCH, GAP, true);
-//        long currentTimeEnd = System.nanoTime();
-//
-//        BigDecimal finalTime = BigDecimal.valueOf((currentTimeEnd - currentTimeStart) / 1000000.);
-//        System.out.println("tempo de execução (ms): " + finalTime);
-//        alinhamento.printStrandInfo();
-//        System.out.println("Fim da execução sequencial:");
         firstSeq =  "ATTAAAGGTTTATACCTTCC";
         secondSeq = "ATCTCACTTCCCCTCGTTCT";
         //parallel
@@ -71,14 +57,13 @@ public class NeedlemanWunschMain {
         System.out.println("numThreads " + numThreads);
         Data data = new Data(firstSeq, secondSeq, MATCH, MISMATCH, GAP);
         nwunsch.ParallelService parallelService = new nwunsch.ParallelService(numThreads, data);
-        int score = parallelService.runParallel();
-
-        System.out.println("A pontuação para este alinhamento (paralelo) é: " + score);
+        return parallelService.buildDataSlices();
 
     }
 
     private static void validateInput(Integer limit, int numThreads) {
 
+        System.out.println("tamanho " + limit + " numThreads "+ numThreads);
         int resto = limit % numThreads;
         int sugestao = numThreads * (limit / numThreads);
         if (resto != 0) {
