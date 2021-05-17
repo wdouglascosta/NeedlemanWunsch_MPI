@@ -1,23 +1,20 @@
 package nwunsch;
 
-import java.util.concurrent.Semaphore;
-
-
 public class PData {
 
-	private Integer[][] data;
+	public Integer[][] solution;
 	private Integer[] buffer;
 	String firstSeq;
 	String secondSeq;
 
 	public Integer[][] getData() {
 
-		return data;
+		return solution;
 	}
 
 	public void setData(Integer[][] data) {
 
-		this.data = data;
+		this.solution = data;
 	}
 
 	public Integer[] getBuffer() {
