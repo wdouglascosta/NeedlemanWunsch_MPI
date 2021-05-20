@@ -7,7 +7,6 @@ import java.util.List;
 
 import mpi.Intracomm;
 import mpi.MPI;
-import nwunsch.utils.FileLoader;
 
 /**
  * @author mateus
@@ -36,28 +35,15 @@ public class NeedlemanWunschMain {
 
     public List<PData> initialize(String[] args) throws IOException {
 
-        FileLoader fileLoader = new FileLoader();
-
         String firstSeq;
         String secondSeq;
-        Integer limit = 1000;
         int numThreads = 4; //USAR O MPI SIZE AQUI
-
-        if (limit != null && limit > 0) {
-//            firstSeq = fileLoader.getSequence("Sequence A").substring(0, limit);
-//            secondSeq = fileLoader.getSequence("Sequence B").substring(0, limit);
-        } else {
-            firstSeq = fileLoader.getSequence("Sequence A");
-            secondSeq = fileLoader.getSequence("Sequence B");
-        }
 
         firstSeq = "ATTAAAGGTTTATACCTTCC";
         secondSeq = "ATCTCACTTCCCCTCGTTCT";
-        //parallel
 
 //        System.out.println("numThreads " + numThreads);
         Data data = new Data(firstSeq, secondSeq, MATCH, MISMATCH, GAP);
-        nwunsch.ParallelService parallelService = new nwunsch.ParallelService(numThreads, data);
         return buildDataSlices(numThreads, data);
 
     }
@@ -178,18 +164,6 @@ public class NeedlemanWunschMain {
     private int max(int a, int b, int c) {
 
         return Math.max(Math.max(a, b), c);
-    }
-
-    private void validateInput(Integer limit, int numThreads) {
-
-        System.out.println("tamanho " + limit + " numThreads " + numThreads);
-        int resto = limit % numThreads;
-        int sugestao = numThreads * (limit / numThreads);
-        if (resto != 0) {
-            throw new IllegalArgumentException(
-                    "Entrada inválida, o tamanho da string de entrada deve ser um múltiplo do numero de threads, sugestão: "
-                            + sugestao);
-        }
     }
 
 }
